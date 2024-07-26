@@ -37,10 +37,7 @@ export interface CountryDetails {
   status: string;
   unMember: boolean;
   currencies: string[];
-  idd: {
-    root: string;
-    suffixes: string[];
-  };
+  idd: string;
   capital: string[];
   altSpellings: string[];
   region: string;
@@ -62,7 +59,6 @@ export interface CountryDetails {
       m: string;
     };
   };
-  flag: string;
   maps: {
     googleMaps: string;
     openStreetMaps: string;

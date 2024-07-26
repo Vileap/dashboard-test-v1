@@ -1,8 +1,9 @@
 import React from "react";
-import { Card, Col, Descriptions, Modal, Row } from "antd";
+import { Card, Col, Descriptions, Divider, Image, Modal, Row } from "antd";
 import type { DescriptionsProps } from "antd";
 import { Country, CountryDetails } from "@/shared/model/common";
 import { EyeOutlined } from "@ant-design/icons";
+import { formatAndDisplayIDD } from "@/utils/helper";
 
 interface IProps {
   currentCountries: Country[] | undefined;
@@ -16,6 +17,7 @@ const CountryList = ({ currentCountries }: IProps) => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedCountry, setSelectedCountry] = React.useState<Country>();
   const [data, setData] = React.useState<CountryDetails>();
+  const [loading, setLoading] = React.useState(false);
 
   const showModal = (value: Country) => {
     setSelectedCountry(value);
@@ -78,9 +80,28 @@ const CountryList = ({ currentCountries }: IProps) => {
     },
   ];
 
+  const items2: DescriptionsProps["items"] = [
+    {
+      key: "1",
+      label: "Country Calling Code",
+      children: <p>{formatAndDisplayIDD(data?.idd)}</p>,
+    },
+    {
+      key: "2",
+      label: "Country Code 2",
+      children: <p>{data?.cca2}</p>,
+    },
+    {
+      key: "3",
+      label: "Country Code 3",
+      children: <p>{data?.cca3}</p>,
+    },
+  ];
+
   React.useEffect(() => {
     const getCountries = async () => {
       try {
+        setLoading(true);
         const resp = await fetch(
           `${API_URL}/v3.1/name/${selectedCountry?.name.toLowerCase()}`
         );
@@ -95,10 +116,13 @@ const CountryList = ({ currentCountries }: IProps) => {
           };
 
           setData(value);
+          setLoading(false);
         } else {
+          setLoading(false);
           console.error("Error formatting data", resp.status);
         }
       } catch (err) {
+        setLoading(false);
         console.error("Error fetching data", err);
       }
     };
@@ -109,63 +133,65 @@ const CountryList = ({ currentCountries }: IProps) => {
   return (
     <>
       <div>
-        <Row gutter={24}>
+        <Row gutter={[16, 16]}>
           {currentCountries &&
             currentCountries.map((country, i) => {
               return (
-                <div key={i}>
-                  <Col xs={24} sm={12} md={12} lg={12}>
-                    <Card
-                      hoverable
-                      style={{
-                        width: 300,
-                        height: "100%",
-                        marginBottom: "24px",
-                      }}
-                      cover={
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          alt={country.name}
-                          src={country.flags}
-                          style={{ height: 240 }}
-                        />
-                      }
-                      actions={[
-                        <EyeOutlined
-                          key="setting"
-                          onClick={() => showModal(country)}
-                        />,
-                      ]}
-                    >
-                      <Meta
-                        title={country.name}
-                        description={
-                          <>
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html: country?.nativeLang,
-                              }}
-                            ></div>
-                            <p>
-                              Country Code 2: <span>{country.cca2}</span>
-                            </p>
-                            <p>
-                              Country Code 3: <span>{country.cca3}</span>
-                            </p>
-                            <p>
-                              Alternative Name:{" "}
-                              <span>{country?.altSpellings}</span>
-                            </p>
-
-                            <p>
-                              Country Calling Code: <span>{country.idd}</span>
-                            </p>
-                          </>
-                        }
+                <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={6} key={i}>
+                  <Card
+                    key={i}
+                    hoverable
+                    style={{
+                      width: 360,
+                      minWidth: "100%",
+                    }}
+                    cover={
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        alt={country.name}
+                        src={country.flags}
+                        style={{
+                          height: "240px",
+                          width: "100%",
+                          objectFit: "fill",
+                        }}
                       />
-                    </Card>
-                  </Col>
-                </div>
+                    }
+                    actions={[
+                      <EyeOutlined
+                        key="setting"
+                        onClick={() => showModal(country)}
+                      />,
+                    ]}
+                  >
+                    <Meta
+                      title={country.name}
+                      description={
+                        <div className="mt-2">
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: country?.nativeLang,
+                            }}
+                          ></div>
+                          <p>
+                            Country Code 2: <span>{country.cca2}</span>
+                          </p>
+                          <p>
+                            Country Code 3: <span>{country.cca3}</span>
+                          </p>
+                          <p>
+                            Alternative Name:{" "}
+                            <span>{country?.altSpellings}</span>
+                          </p>
+
+                          <p>
+                            Country Calling Code: <span>{country.idd}</span>
+                          </p>
+                        </div>
+                      }
+                    />
+                  </Card>
+                </Col>
               );
             })}
         </Row>
@@ -175,11 +201,33 @@ const CountryList = ({ currentCountries }: IProps) => {
         title="Country Details"
         open={isModalOpen}
         footer={false}
-        width={1000}
+        width={1200}
         onCancel={() => setIsModalOpen(false)}
+        loading={loading}
       >
         <div className="mt-2">
-          <Descriptions items={items} />
+          <Descriptions title="Info" items={items} />
+          <Descriptions
+            title="Additional Info"
+            items={items2}
+            className="mt-2"
+          />
+
+          <Divider />
+
+          {data?.flags.png && (
+            <div>
+              <h4 className="mb-2">Flag</h4>
+
+              <Image.PreviewGroup>
+                <Image
+                  width={200}
+                  src={data.flags.png}
+                  alt={data.name.official}
+                />
+              </Image.PreviewGroup>
+            </div>
+          )}
         </div>
       </Modal>
     </>

@@ -19,8 +19,8 @@ export function displayFirstLanguageInfo(data: any) {
 }
 
 export function formatAndDisplayIDD(data: any) {
-  const root = data.root;
-  const suffixes = data.suffixes;
+  const root = data?.root;
+  const suffixes = data?.suffixes;
 
   // Concatenate root and suffixes
   const formattedValue = `${root}${suffixes?.join("")}`;
