@@ -10,6 +10,11 @@ export interface Country {
   currencies?: string[];
   languages?: Object;
   borders?: string[];
+  nativeLang?: string | any;
+  cca2: string;
+  cca3: string;
+  altSpellings?: string;
+  idd: string;
 }
 
 export interface CountryDetails {
