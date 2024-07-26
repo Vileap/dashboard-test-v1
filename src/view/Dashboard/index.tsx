@@ -19,15 +19,25 @@ const Dashboard = () => {
 
   const [defaultRegions, setDefaultRegions] = React.useState<any>();
   const [inputValue, setInputValue] = React.useState("");
+  const [sort, setSort] = React.useState("asc");
   const [currentPages, setCurrentPages] = React.useState({
     prevPage: 0,
     currentPage: 1,
     nextPage: 2,
   });
-  const countriesPerPage = 8;
+  const countriesPerPage = 25;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
+    setCurrentPages({
+      prevPage: 0,
+      currentPage: 1,
+      nextPage: 2,
+    });
+  };
+
+  const onChangeSort = (value: string) => {
+    setSort(value);
     setCurrentPages({
       prevPage: 0,
       currentPage: 1,
@@ -53,6 +63,13 @@ const Dashboard = () => {
           ?.filter((country) =>
             country.name.toLowerCase().includes(inputValue?.toLowerCase())
           )
+          .sort((a, b) => {
+            const nameA = a.name?.toLowerCase() || "";
+            const nameB = b.name?.toLowerCase() || "";
+            if (nameA < nameB) return sort === "asc" ? -1 : 1;
+            if (nameA > nameB) return sort === "asc" ? 1 : -1;
+            return 0;
+          })
           .slice(
             (currentPages.currentPage - 1) * countriesPerPage,
             currentPages.currentPage * countriesPerPage
@@ -71,7 +88,7 @@ const Dashboard = () => {
       : [];
 
   const totalPages = Math.ceil(
-    (visibleCountries?.length || 0) / countriesPerPage
+    (visibleCountries?.length * 10 || 0) / countriesPerPage
   );
 
   React.useEffect(() => {
@@ -104,7 +121,7 @@ const Dashboard = () => {
             </Form.Item>
           </Col>
 
-          <Col xs={24} sm={12} md={8} lg={12}>
+          <Col xs={24} sm={12} md={8} lg={8}>
             <Form.Item name="region" label="Region">
               <Select onChange={onChangeRegion}>
                 {regions.map((region, i) => (
@@ -113,6 +130,17 @@ const Dashboard = () => {
                   </Option>
                 ))}
               </Select>
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12} md={8} lg={8}>
+            <Form.Item name="sort" label="Sort">
+              <Select
+                onChange={onChangeSort}
+                options={[
+                  { value: "asc", label: <span>Sort Ascending</span> },
+                  { value: "desc", label: <span>Sort Descending</span> },
+                ]}
+              ></Select>
             </Form.Item>
           </Col>
         </Row>

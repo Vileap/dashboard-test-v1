@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Country } from "@/shared/model/common";
+import { displayFirstLanguageInfo, formatAndDisplayIDD } from "@/utils/helper";
 
 interface IContext {
   countries: Country[] | undefined | Country;
@@ -39,9 +40,11 @@ export const CountryContextProvider = ({
       queryParam = "/all";
   }
 
-  // country?.name.nativeName[native].official
   const formatResponse = async (data: Country[]) => {
     const formattedData: Country[] = data.map((country: any) => {
+      const idd = formatAndDisplayIDD(country?.idd);
+      const nativeLang = displayFirstLanguageInfo(country.name.nativeName);
+
       const value = {
         name: country.name.official,
         population: country.population,
@@ -50,20 +53,17 @@ export const CountryContextProvider = ({
         capital: country.capital,
         cca2: country.cca2,
         cca3: country.cca3,
+        idd,
+        nativeLang,
+        altSpellings:
+          country.altSpellings &&
+          country.altSpellings.map((alt: any) => alt).join(", "),
       };
 
       return value;
     });
     return formattedData;
   };
-
-  // Flags (Please use png file within flags property)
-  //       - Country Name (name.official)
-  //       - 2 character Country Code (cca2)
-  //       - 3 character Country Code (cca3)
-  //       - Native Country Name (name.nativeName)
-  //       - Alternative Country Name (altSpellings)
-  //       - Country Calling Codes (idd)
 
   useEffect(() => {
     const getCountries = async () => {

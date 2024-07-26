@@ -20,11 +20,7 @@ const Pagination = ({
   totalPages,
   currPages,
   setCurrPages,
-  currentCountries,
-  countryList,
 }: PaginationProps) => {
-  console.log(countryList?.length, "test");
-
   const { prevPage, currentPage, nextPage } = currPages;
 
   const onPageChange = (page: number, pageSize: number) => {
@@ -38,8 +34,8 @@ const Pagination = ({
 
   return (
     <AntdPagination
-      total={countryList?.length}
-      current={currPages.currentPage}
+      total={totalPages}
+      current={currentPage}
       onChange={onPageChange}
       showSizeChanger={false}
     />

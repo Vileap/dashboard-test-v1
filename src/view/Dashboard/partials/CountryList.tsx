@@ -118,7 +118,7 @@ const CountryList = ({ currentCountries }: IProps) => {
                     <Card
                       hoverable
                       style={{
-                        width: 350,
+                        width: 300,
                         height: "100%",
                         marginBottom: "24px",
                       }}
@@ -141,15 +141,24 @@ const CountryList = ({ currentCountries }: IProps) => {
                         title={country.name}
                         description={
                           <>
-                            <p className="mt-2">
-                              Population:{" "}
-                              <span>{country.population.toLocaleString()}</span>
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: country?.nativeLang,
+                              }}
+                            ></div>
+                            <p>
+                              Country Code 2: <span>{country.cca2}</span>
                             </p>
                             <p>
-                              Region: <span>{country.region}</span>
+                              Country Code 3: <span>{country.cca3}</span>
                             </p>
                             <p>
-                              Capital: <span>{country.capital}</span>
+                              Alternative Name:{" "}
+                              <span>{country?.altSpellings}</span>
+                            </p>
+
+                            <p>
+                              Country Calling Code: <span>{country.idd}</span>
                             </p>
                           </>
                         }
