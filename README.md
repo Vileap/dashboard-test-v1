@@ -1,4 +1,10 @@
+# Countries Catalog Implementation **NextJS Example**
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+# Pre-requisites
+- Install [Node.js](https://nodejs.org/en/) version 20.16.0
+
 
 ## Getting Started
 
@@ -15,7 +21,7 @@ You can start editing the page by modifying `pages/index.tsx`. The page auto-upd
 
 ### Setup Env
 
-To get up and running, make sure to set up the local `.env` file by copy the contens of `.env.example`
+To start up and running, make sure to set up the local `.env` file by copy the contents of `.env.example`
 
 ### Run Application
 
